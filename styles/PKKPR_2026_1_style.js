@@ -23,7 +23,7 @@ var style_PKKPR_2026_1 = function(feature, resolution){
         labelText = String("");
     }
     var style = [ new ol.style.Style({
-        stroke: new ol.style.Stroke({color: 'rgba(255,5,51,1.0)', lineDash: null, lineCap: 'butt', lineJoin: 'miter', width: 0.988}),
+        stroke: new ol.style.Stroke({color: 'rgba(14,187,230,1.0)', lineDash: null, lineCap: 'butt', lineJoin: 'miter', width: 0.988}),
         text: createTextStyle(feature, resolution, labelText, labelFont,
                               labelFill, placement, bufferColor,
                               bufferWidth, textAlign, offsetX, offsetY, overflow, repeat)

@@ -48,6 +48,10 @@
     <body>
         <div id="map">
             <!-- Fitur Input Koordinat -->
+             <!-- Tombol GPS -->
+<div id="gps-box" style="position: absolute; top: 10px; left: 50px; background: white; padding: 5px; border-radius: 5px; z-index: 1000; box-shadow: 0 0 5px rgba(0,0,0,0.3); font-family: sans-serif;">
+    <button onclick="locateMe()" style="padding: 5px 10px; background: #E53935; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 12px; font-weight: bold;">📍 Lokasi Saya</button>
+</div>
 <div id="xy-input-box" style="position: absolute; top: 10px; right: 10px; background: white; padding: 10px; border-radius: 5px; z-index: 1000; box-shadow: 0 0 5px rgba(0,0,0,0.3); font-family: sans-serif;">
     <label style="font-size: 12px; font-weight: bold;">Cari Koordinat (X, Y):</label><br>
     <input type="text" id="xy-coord" placeholder="Contoh: 106.8, -6.2" style="margin-top: 5px; padding: 3px; width: 150px; font-size: 12px;">
@@ -140,5 +144,57 @@ function goToXY() {
     }
 }
 </script>       
+<script>
+var gpsLayer = null; // Variabel untuk menyimpan titik GPS
+
+function locateMe() {
+    if (navigator.geolocation) {
+        // Meminta lokasi secara real-time (watchPosition)
+        navigator.geolocation.watchPosition(function(position) {
+            var lon = position.coords.longitude;
+            var lat = position.coords.latitude;
+            
+            // Konversi koordinat HP ke format peta
+            var point = ol.proj.fromLonLat([lon, lat]);
+            var m = (typeof map !== 'undefined') ? map : olMap;
+
+            // Jika layer GPS belum ada, buat baru
+            if (!gpsLayer) {
+                gpsLayer = new ol.layer.Vector({
+                    source: new ol.source.Vector(),
+                    style: new ol.style.Style({
+                        image: new ol.style.Circle({
+                            radius: 8,
+                            fill: new ol.style.Fill({color: '#1976D2'}), // Warna biru Google Maps
+                            stroke: new ol.style.Stroke({color: 'white', width: 2}) // Garis tepi putih
+                        })
+                    })
+                });
+                m.addLayer(gpsLayer);
+            }
+
+            // Hapus titik lama, ganti dengan titik baru (karena Anda bergerak)
+            var feature = new ol.Feature({
+                geometry: new ol.geom.Point(point)
+            });
+            gpsLayer.getSource().clear();
+            gpsLayer.getSource().addFeature(feature);
+
+            // Geser peta ke lokasi Anda
+            m.getView().animate({
+                center: point,
+                zoom: 18,
+                duration: 1000
+            });
+
+        }, function(error) {
+            // Jika user menolak akses GPS
+            alert("Gagal mendapatkan lokasi. Pastikan GPS aktif dan izin lokasi diberikan.");
+        }, { enableHighAccuracy: true }); // Meminta akurasi GPS tertinggi
+    } else {
+        alert("Browser Anda tidak mendukung fitur lokasi.");
+    }
+}
+</script>
     </body>
 </html>

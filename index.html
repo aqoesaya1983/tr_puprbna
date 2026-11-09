@@ -53,6 +53,14 @@
 <div id="gps-box" style="position: absolute; top: 10px; left: 50px; background: white; padding: 5px; border-radius: 5px; z-index: 1000; box-shadow: 0 0 5px rgba(0,0,0,0.3); font-family: sans-serif;">
     <button onclick="locateMe()" style="padding: 5px 10px; background: #E53935; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 12px; font-weight: bold;">📍 Lokasi Saya</button>
 </div>
+<!-- Panel Ceklis Layer -->
+<div id="layer-panel" style="position: absolute; bottom: 30px; right: 10px; background: rgba(255, 255, 255, 0.95); padding: 10px; border-radius: 5px; z-index: 1000; box-shadow: 0 0 5px rgba(0,0,0,0.5); font-family: sans-serif; min-width: 150px;">
+    <div style="font-weight: bold; font-size: 13px; border-bottom: 1px solid #ccc; padding-bottom: 5px; margin-bottom: 8px;">🗺️ Pilih Layer:</div>
+    <div id="layer-list" style="font-size: 12px; display: flex; flex-direction: column; gap: 5px;">
+        <!-- Ceklis akan dimuat oleh script -->
+        <em style="color: gray;">Memuat layer...</em>
+    </div>
+</div>
 <div id="xy-input-box" style="position: absolute; top: 10px; right: 10px; background: white; padding: 10px; border-radius: 5px; z-index: 1000; box-shadow: 0 0 5px rgba(0,0,0,0.3); font-family: sans-serif;">
     <label style="font-size: 12px; font-weight: bold;">Cari Koordinat (X, Y):</label><br>
     <input type="text" id="xy-coord" placeholder="Contoh: 106.8, -6.2" style="margin-top: 5px; padding: 3px; width: 150px; font-size: 12px;">
@@ -207,5 +215,56 @@ function locateMe() {
 }
 </script>
 >>>>>>> 549d6bdcf6877d66ffc07018b0acac9ac212e69d
-    </body>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    // Beri waktu sebentar agar peta OpenLayers selesai dimuat
+    setTimeout(function() {
+        var m = (typeof map !== 'undefined') ? map : olMap;
+        var listContainer = document.getElementById('layer-list');
+        
+        // Kosongkan teks "Memuat layer..."
+        listContainer.innerHTML = ''; 
+
+        // Ambil semua layer di peta
+        var layers = m.getLayers().getArray();
+        var layerCount = 0;
+
+        layers.forEach(function(layer, index) {
+            // Hanya proses layer vektor/data (bukan basemap gambar)
+            if (layer instanceof ol.layer.Vector || layer instanceof ol.layer.Tile) {
+                
+                // Ambil nama layer dari properti qgis2web, atau beri nama default
+                var layerName = layer.get('name') || layer.get('title') || "Layer " + (layerCount + 1);
+                
+                // Buat elemen ceklis
+                var label = document.createElement('label');
+                label.style.cursor = 'pointer';
+                label.style.display = 'flex';
+                label.style.alignItems = 'center';
+                label.style.gap = '5px';
+
+                var checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = layer.getVisible(); // Sesuai status awal di QGIS
+
+                // Aksi saat ceklis diklik
+                checkbox.addEventListener('change', function() {
+                    layer.setVisible(this.checked);
+                });
+
+                label.appendChild(checkbox);
+                label.appendChild(document.createTextNode(layerName));
+                listContainer.appendChild(label);
+                layerCount++;
+            }
+        });
+        
+        if (layerCount === 0) {
+            listContainer.innerHTML = '<em style="color: red;">Tidak ada layer ditemukan.</em>';
+        }
+
+    }, 1500); // Tunggu 1,5 detik
+});
+</script> 
+</body>
 </html>

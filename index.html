@@ -348,7 +348,7 @@ window.addEventListener('load', function() {
         // 1. Buat layer baru dengan sumber file GeoJSON Anda
         var newLayer = new ol.layer.Vector({
             source: new ol.source.Vector({
-                url: 'APKSB_WGS84.geojson', // <--- GANTI DENGAN NAMA FILE ANDA
+                url: 'APKSB_WGS84.geojson', //
                 format: new ol.format.GeoJSON()
             }),
             // 2. Atur gaya (warna & ketebalan) untuk layer ini
@@ -363,7 +363,7 @@ window.addEventListener('load', function() {
                     width: 2
                 })
             }),
-            name: 'Layer Jembatan' // Nama yang akan muncul di menu ceklis
+            name: 'APKSB_WGS84' // Nama yang akan muncul di menu ceklis
         });
 
         // 3. Tambahkan layer ke peta

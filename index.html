@@ -338,5 +338,47 @@ window.onload = function() {
 };
 </script>
 </script>
+<script>
+window.addEventListener('load', function() {
+    // Beri jeda 2 detik agar peta utama selesai dimuat
+    setTimeout(function() {
+        var m = window.map || window.olMap;
+        if (!m) return;
+
+        // 1. Buat layer baru dengan sumber file GeoJSON Anda
+        var newLayer = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                url: 'APKSB_WGS84.geojson', // <--- GANTI DENGAN NAMA FILE ANDA
+                format: new ol.format.GeoJSON()
+            }),
+            // 2. Atur gaya (warna & ketebalan) untuk layer ini
+            style: new ol.style.Style({
+                image: new ol.style.Circle({ // Jika titik, pakai lingkaran
+                    radius: 6,
+                    fill: new ol.style.Fill({color: 'blue'}), // Warna biru
+                    stroke: new ol.style.Stroke({color: 'white', width: 2})
+                }),
+                stroke: new ol.style.Stroke({ // Jika garis/poligon
+                    color: 'red',
+                    width: 2
+                })
+            }),
+            name: 'Layer Jembatan' // Nama yang akan muncul di menu ceklis
+        });
+
+        // 3. Tambahkan layer ke peta
+        m.addLayer(newLayer);
+        
+        // 4. (Opsional) Zoom ke layer baru tersebut
+        newLayer.getSource().on('change', function(e) {
+            if (newLayer.getSource().getState() === 'ready') {
+                var extent = newLayer.getSource().getExtent();
+                m.getView().fit(extent, {duration: 1500, padding: [50, 50, 50, 50]});
+            }
+        });
+
+    }, 2000);
+});
+</script>
     </body>
 </html>

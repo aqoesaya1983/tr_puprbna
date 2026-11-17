@@ -51,6 +51,17 @@
         }
     }, true);
 </script>
+<script>
+    // Menimpa fungsi error bawaan browser
+    window.addEventListener('error', function(event) {
+        // Jika error mengandung 'redeclaration', kita paksa berhenti agar tidak memblokir script lain
+        if (event.message && event.message.includes('redeclaration')) {
+            event.preventDefault();
+            console.log('Error redeclaration berhasil diabaikan.');
+            return true;
+        }
+    }, true);
+</script>
     </head>
     <body>
         <div id="map">

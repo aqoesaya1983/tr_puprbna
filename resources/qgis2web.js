@@ -505,7 +505,7 @@ var bottomRightContainerDiv = document.getElementById('bottom-right-container')
 
 
 //measurement
-let measuring = false;
+var measuring = false;
 
 	const measureButton = document.createElement('button');
 	measureButton.className = 'measure-button fas fa-ruler';

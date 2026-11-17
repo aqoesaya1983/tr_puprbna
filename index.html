@@ -44,6 +44,13 @@
         }
         </style>
         <title></title>
+        <script>
+    window.addEventListener('error', function(e) {
+        if (e.message && e.message.includes('redeclaration')) {
+            e.preventDefault();
+        }
+    }, true);
+</script>
     </head>
     <body>
         <div id="map">

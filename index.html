@@ -316,5 +316,31 @@ window.onload = function() {
 <script>
   window.onerror = function() { return true; }; // Mengabaikan error
 </script>
+<script>
+// Paksa buat peta baru khusus untuk GeoJSON ini
+window.onload = function() {
+    setTimeout(function() {
+        // Buat layer GeoJSON langsung
+        var vectorLayer = new ol.layer.Vector({
+            source: new ol.source.Vector({
+                url: 'APKSB_WGS84.geojson', // <--- GANTI NAMA FILE INI
+                format: new ol.format.GeoJSON()
+            }),
+            style: new ol.style.Style({
+                stroke: new ol.style.Stroke({ color: 'magenta', width: 5 })
+            })
+        });
+
+        // Trik: Cari elemen peta dan masukkan layer secara paksa
+        var mapElement = document.getElementById('map');
+        if (mapElement && mapElement.map) {
+            mapElement.map.addLayer(vectorLayer);
+            alert("Layer GeoJSON berhasil ditambahkan!");
+        } else {
+            alert("Gagal menemukan peta.");
+        }
+    }, 3000); // Tunggu 3 detik
+};
+</script>
     </body>
 </html>

@@ -314,32 +314,32 @@ window.onload = function() {
 </script>
 </script>
 <script>
-  window.onerror = function() { return true; }; // Mengabaikan error
-</script>
-<script>
-// Paksa buat peta baru khusus untuk GeoJSON ini
 window.onload = function() {
     setTimeout(function() {
-        // Buat layer GeoJSON langsung
-        var vectorLayer = new ol.layer.Vector({
+        var m = window.map || window.olMap;
+        if (!m) return;
+        
+        var layer = new ol.layer.Vector({
             source: new ol.source.Vector({
-                url: 'https://raw.githubusercontent.com/tataruangpuprbna/tr_puprbna/main/APKSB_WGS84.geojson', // <--- GANTI NAMA FILE INI
+                url: 'APKSB_WGS84.geojson',
                 format: new ol.format.GeoJSON()
             }),
             style: new ol.style.Style({
-                stroke: new ol.style.Stroke({ color: 'magenta', width: 5 })
+                stroke: new ol.style.Stroke({ color: 'red', width: 3 })
             })
         });
-
-        // Trik: Cari elemen peta dan masukkan layer secara paksa
-        var mapElement = document.getElementById('map');
-        if (mapElement && mapElement.map) {
-            mapElement.map.addLayer(vectorLayer);
-            alert("Layer GeoJSON berhasil ditambahkan!");
-        } else {
-            alert("Gagal menemukan peta.");
-        }
-    }, 3000); // Tunggu 3 detik
+        
+        m.addLayer(layer);
+        alert("Mencoba memuat GeoJSON...");
+        
+        // Paksa zoom ke layer tersebut setelah termuat
+        layer.getSource().on('change', function() {
+            if (layer.getSource().getState() === 'ready') {
+                var extent = layer.getSource().getExtent();
+                m.getView().fit(extent, {padding: [50, 50, 50, 50], duration: 1000});
+            }
+        });
+    }, 2000);
 };
 </script>
     </body>
